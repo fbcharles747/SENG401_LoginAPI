@@ -9,6 +9,9 @@ namespace LoginAPI.Helper
         public MappingProfile()
         {
             CreateMap<Account, AccountDto>();
+            
+            //for create account
+            CreateMap<AccountDto, Account>();
         }
     }
 }

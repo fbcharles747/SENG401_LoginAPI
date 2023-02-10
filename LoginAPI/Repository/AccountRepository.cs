@@ -28,12 +28,14 @@ namespace LoginAPI.Repository
 
         public bool CreateAccount(Account account)
         {
-            throw new NotImplementedException();
+            _context.Accounts.Add(account);
+            return Save();
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            var saved=_context.SaveChanges();
+            return saved > 0;
         }
     }
 }

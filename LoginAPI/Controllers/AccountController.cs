@@ -37,17 +37,34 @@ namespace LoginAPI.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateAccount([FromBody] AccountDto account)
+        public IActionResult CreateAccount([FromBody] SignUpInput input)
         {
-            if (account == null) return BadRequest(ModelState);
-            if(_accountRepository.Exist(account.UCID))
+            if (input == null) return BadRequest(ModelState);
+            if(_accountRepository.Exist(input.UCID))
             {
                 ModelState.AddModelError("","Account already exists");
                 return StatusCode(422, ModelState);
             }
-            var MappedAccount=_mapper.Map<Account>(account);
 
-            if (!_accountRepository.CreateAccount(MappedAccount))
+            // we create account from signup input because:
+            // 1. we need to parse datetime from javascript date
+            // 2. Access code is combined from UCID and user-set PIN
+            Account account=new Account()
+            {
+                UCID= input.UCID,
+                FirstName=input.firstName,
+                LastName=input.lastName,
+                BirthDate=DateTime.Parse(input.birthDate),
+                Email=input.email,
+                Address=input.address,
+                Password=input.password,
+                AccessCode=input.UCID+input.PIN,
+            };
+
+
+            
+
+            if (!_accountRepository.CreateAccount(account))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500,ModelState);
